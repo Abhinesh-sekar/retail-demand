@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  forecast-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: retail-demand-forecasting:latest
+    container_name: retail-demand-forecast-api
+    ports:
+      - "8000:8000"
+    environment:
+      - CONFIG_PATH=/app/config/config.yaml
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
